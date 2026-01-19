@@ -1,7 +1,17 @@
+using Microsoft.EntityFrameworkCore;
+using Sports_Store.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped<IStoreRepository, EfStoreRepository>();
+
+builder.Services.AddDbContext<SportsStoreDb>(opts =>
+{
+    opts.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
 
 var app = builder.Build();
 
@@ -26,5 +36,7 @@ app.MapControllerRoute(
         pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
+
+SeedData.EnsurePopulated(app);
 
 app.Run();
